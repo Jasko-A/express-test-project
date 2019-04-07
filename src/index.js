@@ -8,45 +8,54 @@ console.log(process.env.MY_SECRET);
 
 //////////////////////////////////////////////////////////
 
+import models from './models';
+
 require('dotenv').config(); //allow to use .env files for secret values
 var cors = require('cors');
 var express = require('express');
 const uuidv4 = require('uuid/v4');
-var bodyParser = require('body-parser')
+//var bodyParser = require('body-parser') //so npm packages can be imported this way
+import bodyParser from 'body-parser';	  //or this way below !!!
 var app = express();
 
 
-let users = {
-  1: {
-    id: '1',
-    username: 'Robin Wieruch',
-  },
-  2: {
-    id: '2',
-    username: 'Dave Davids',
-  },
-};
+// let users = {
+//   1: {
+//     id: '1',
+//     username: 'Robin Wieruch',
+//   },
+//   2: {
+//     id: '2',
+//     username: 'Dave Davids',
+//   },
+// };
 
-let messages = {
-  1: {
-    id: '1',
-    text: 'Hello World',
-    userId: '1',
-  },
-  2: {
-    id: '2',
-    text: 'By World',
-    userId: '2',
-  },
-};
+// let messages = {
+//   1: {
+//     id: '1',
+//     text: 'Hello World',
+//     userId: '1',
+//   },
+//   2: {
+//     id: '2',
+//     text: 'By World',
+//     userId: '2',
+//   },
+// };
 
+//ALL the json above will now be modularized and put into the models directory
+//in the index.js file
 
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-  req.me = users[1];
-  next();
+	req.context = {
+		models,
+		me: models.users[1],
+	};
+  
+  	next();
 });
 
 app.get('/', (req,res)=>{
@@ -56,28 +65,43 @@ app.get('/', (req,res)=>{
 // app.get('/user/:userID', (req,res) =>{
 // 	res.send('Get user ID: ' + req.params.userID);
 // });
-
+/*
 app.get('/users', (req, res) => {
   res.send(Object.values(users));
 });
-
+*/
+app.get('/users', (req, res) => {
+  res.send(Object.values(req.context.models.users));
+});
+/*
 app.get('/users/:userId', (req, res) => {
   res.send(users[req.params.userId]);
 });
-
+*/
+app.get('/users/:userId', (req, res) => {
+  res.send(req.context.models.users[req.params.userId]);
+});
+/*
 app.get('/messages', (req, res) => {
   return res.send(Object.values(messages));
 });
-
+*/
+app.get('/messages', (req, res) => {
+  return res.send(Object.values(req.context.models.messages));
+});
+/*
 app.get('/messages/:messageId', (req, res) => {
   return res.send(messages[req.params.messageId]);
 });
-
+*/
+app.get('/messages/:messageId', (req, res) => {
+  return res.send(req.context.models.messages[req.params.messageId]);
+});
 
 app.post('/', (req,res)=>{
 	res.send('\nPOST')
 });
-
+/*
 app.post('/messages', (req, res) => {
   const id = uuidv4();
   const message = {
@@ -90,6 +114,19 @@ app.post('/messages', (req, res) => {
 
   return res.send(message);
 });
+*/
+app.post('/messages', (req, res) => {
+  const id = uuidv4();
+  const message = {
+    id,
+    text: req.body.text,
+    userId: req.context.me.id,
+  };
+
+  req.context.models.messages[id] = message;
+
+  return res.send(message);
+});
 
 app.put('/', (req,res)=>{
 	res.send('\nPUT')
@@ -98,7 +135,7 @@ app.put('/', (req,res)=>{
 app.delete('/', (req,res)=>{
 	res.send('\nDELETE')
 });
-
+/*
 app.delete('/messages/:messageId', (req, res) => {
   const {
     [req.params.messageId]: message,
@@ -106,6 +143,17 @@ app.delete('/messages/:messageId', (req, res) => {
   } = messages;
 
   messages = otherMessages;
+
+  return res.send(message);
+});
+*/
+app.delete('/messages/:messageId', (req, res) => {
+  const {
+    [req.params.messageId]: message,
+    ...otherMessages
+  } = req.context.models.messages;
+
+  req.context.models.messages = otherMessages;
 
   return res.send(message);
 });
