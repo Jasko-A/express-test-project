@@ -62,7 +62,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use('/session', routes.session);
 app.use('/users', routes.user);
 app.use('/messages', routes.message);
