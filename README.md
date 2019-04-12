@@ -13,4 +13,6 @@ Link for creating LOGIN/SINGUP: https://www.codementor.io/blizzerand/building-fo
 
 TimeStamp For database: https://stackoverflow.com/questions/15473325/inserting-current-date-and-time-in-sqlite-database
 
+Dynamically Render nested react components: https://stackoverflow.com/questions/44016676/dynamically-render-a-component-inside-a-another-component-in-react
+
 
