@@ -8,10 +8,22 @@ class SignUpForm extends React.Component {
   }
 
   handleSubmit(e) {
+  	
+  	let firstname = this.refs.FirstName.value;
+  	let lastname = this.refs.LastName.value;
+  	let email = this.refs.Email.value;
   	let username = this.refs.UserName.value;
+  	let password = this.refs.Password.value;
   	var obj = {
+  		firstname: firstname,
+  		lastname: lastname,
+  		email: email,
   		username: username,
+  		password: password,
+
   	};
+
+  	axios.post('/users/submit', obj).then(function(res) {console.log("complete")});
     alert('The value is: ' + JSON.stringify(obj));
     var today = new Date();
 	var dd = String(today.getDate()).padStart(2, '0');
@@ -26,31 +38,28 @@ class SignUpForm extends React.Component {
     return (
       <form onSubmit={this.handleSubmit} className="SignUpForm">
         <label>
-          First Name:
+          
+          <input type="text" ref='FirstName' placeholder="First Name" />
+        </label>
+        <label>
+          
+          <input type="text" ref='LastName' placeholder="Last Name" />
+        </label>
+        <label>
+          
+          <input type="text" ref='Email' placeholder="E-mail" />
+        </label>
+        <label>
+          
           <input type="text" ref='UserName' placeholder="Username" />
         </label>
         <label>
-          Last Name:
-          <input type="text" ref='UserName' placeholder="Username" />
+          
+          <input type="text" ref='Password' placeholder="Password" />
         </label>
-        <label>
-          User Name:
-          <input type="text" ref='UserName' placeholder="Username" />
-        </label>
-        <label>
-          Email:
-          <input type="text" ref='UserName' placeholder="Username" />
-        </label>
-        <label>
-          Password:
-          <input type="text" ref='UserName' placeholder="Username" />
-        </label>
-        <label>
-          Name:
-          {console.log(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
+        {console.log(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
       now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds()))}
-          <input type="text" ref='UserName' placeholder="Username" />
-        </label>
+        
         <input type="submit" value="Submit" />
       </form>
     );
